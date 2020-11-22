@@ -1,0 +1,189 @@
+Component State
+===============
+Be sure to initiate with all the properties you need:
+beforeEach(() => {
+  // wrong:
+  // state = {};
+
+  // correct:
+  state = {
+    foo: 'hello',
+  };
+}
+it('should do something', () => {
+ state.foo = 'bar';
+});
+
++---------------------------------------------------------------------------+
+|   Vue Test Utils is the official unit testing utility library for Vue.js. |
+|   documentation: https://vue-test-utils.vuejs.org/                        |
+|   git: https://github.com/vuejs/vue-test-utils                            |
++---------------------------------------------------------------------------+
+
+Component mount
+===============
+
+shallowMount method allows to mount the component and will be rendered with stubbed child components.
+createLocalVue method allows to create a Vue class wrapper without polluting the global Vue class when adding components, mixins, props, etc.
+
+// import Vue from 'vue';
+import { shallowMount, createLocalVue } from '@vue/test-utils';
+const localVue = createLocalVue();
+describe('caption.vue', () => {
+  let wrapper;
+  beforeEach(() => {
+    wrapper = shallowMount(ComponentName, {
+      localVue,
+      propsData: {},
+    });
+  });
+});
+
+Mocking functions
+=================
+
+Mock a method from your Vue instance by using the vm variable of your Vue class.
+--------------------------------------------------------------------------------
+wrapper.vm.didBlur = jest.fn();
+
+Mock return values of functions you need to require the whole module
+--------------------------------------------------------------------
+const captionsHelper = require('@/js/helpers/captions');
+captionsHelper.didClickOutside.mockReturnValueOnce(false);
+
+Expect n function calls:
+------------------------
+expect(wrapper.vm.didBlur.mock.calls.length).toBe(1);
+
+Expect if an event 
+===================
+
+was emitted through component:
+------------------------------
+describe('#didBlur', () => {
+  it('should emit setActiveCaptionState event', () => {
+    // to call the function that will emit the event
+    wrapper.vm.didBlur();
+    
+    // check if the event was emitted
+    expect(wrapper.emitted('setActiveCaptionState')).toBeTruthy();
+
+    // check what arguments has been passed
+    expect(wrapper.emitted('setActiveCaptionState')).toEqual([
+      [{ caption: wrapper.vm.subtitle, isActive: false }],
+    ]);
+
+  });
+});
+
+event was emitted through global $eventHub.
+-------------------------------------------
+it('emit handleCaptionClicked event', () => {
+  // create a stub function with jest
+  const stub = jest.fn();
+
+  // add the stub as the callback of the event
+  wrapper.vm.$eventHub.$on('handleCaptionClicked', stub);
+
+  // call method that will emit the event
+  wrapper.vm.handleClick();
+
+  // check if the event was emitted or the arguments passed
+  expect(stub).toBeCalled();
+  expect(stub).toBeCalledWith(wrapper.vm.subtitle.start_time);
+});
+
+Check if the method in the component was called
+===============================================
+it('emit changeLineBackgroundWarning event', () => {
+  // call method that will emit the event
+  wrapper.vm.changeLineBackgroundWarning  = jest.fn();
+  wrapper.vm.handleInput(event);
+  
+  // check if the event was emitted or the arguments passed
+  expect(wrapper.vm.changeLineBackgroundWarning).toHaveBeenCalled();
+});
+
+Test watchers
+=============
+it('should change the state prop isRead to true', () => {
+  // set the props or state that you’re watching
+  wrapper = shallowMount(Caption, {
+    localVue,
+    propsData: {
+      subtitle: {
+        start_time: 0.5,
+      },
+      currentTime: 0,
+    },
+  });
+  
+  // change the props or state that you’re watching
+  wrapper.setData({ isRead: false });
+  wrapper.setProps({
+    currentTime: 1,
+  });
+
+  // expectation
+  expect(wrapper.vm.isRead).toBeTruthy();
+});
+
+Test Vuex independently
+=======================
+import the real mutation/action/getter that you want to test
+
+Testing Actions
+---------------
+- call the action from the store
+- commit, dispatch, etc, should be jest functions so you can check if they were called or not
+
+to check if an action dispatches other actions or commit any mutation
+
+// Check if a specific action has been called
+it('should initiate the smartcheck plugin', () => {
+  state.showSmartcheck = true;
+  actions.setTaskState(
+    { dispatch, commit, getters, state },
+    { taskFromServer: task, localStorageTaskType: 'captioning' },
+  );
+  expect(dispatch).toHaveBeenCalledWith('initSmartcheckPlugin');
+});
+
+Testing Getters
+---------------
+describe('taskInfo', () => {
+  const state = {
+    id: 'cenas',
+    type: 'cenas',
+    status: 'cenas',
+  };
+  it('should return the right properties', () => {
+    expect(getters.taskInfo(state)).toEqual({
+      id: state.id,
+      type: state.type,
+    });
+  });
+});
+
+Testing Mutations
+-----------------
+need to test is if the state has been changed:
+
+import mutations from '@/js/store/modules/foo/mutations';
+// create a state object
+beforeEach(() => {
+  state = {
+    foo: 'bar'
+  };
+});
+it('should change foo state to john', () => {
+  // pass the state as mutation’s arguments
+  mutations.CHANGE_TO_JOHN(state);
+
+  // check if the state is what you expect
+  expect(state).toEqual({
+    foo: 'john',
+  });
+});
+
+

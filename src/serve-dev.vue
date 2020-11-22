@@ -22,10 +22,13 @@ export default Vue.extend({
 
 <template>
   <div id="app">
-    <app-banner position="bottom">
-      <h1>Banner example</h1>
-    </app-banner>
-    <hello-world :value="hwMessage" :color="hwColor" />
+      <div>   
+        <h3>Vue Custom Library implementation sample </h3>  
+      </div>
+      <hello-world :value="hwMessage" :color="hwColor" />
+      <app-banner position="bottom">
+        <p>This is a custom banner content.</p>
+      </app-banner>
   </div>
 </template>
 

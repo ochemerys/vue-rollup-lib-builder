@@ -1,0 +1,3 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`HelloWorld component with props snapshot should mount HelloWorld component with params 1`] = `<div class="hello" style="color: green;">Hello Tester.</div>`;

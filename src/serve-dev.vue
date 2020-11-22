@@ -4,8 +4,6 @@ import Vue from 'vue';
 import { HelloWorld } from '@/entry';
 import { AppBanner } from '@/entry';
 
-import PageMethods from '../specs/server-stubs/page-methods';
-
 export default Vue.extend({
   name: 'ServeDev',
   components: {

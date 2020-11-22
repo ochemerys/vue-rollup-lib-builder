@@ -1,5 +1,5 @@
 {
-  "name": "vue-rollup-lib",
+  "name": "vue-rollup-lib-builder",
   "version": "1.0.0",
   "description": "Boilerplate project to build VueJS components library with rollup",
   "main": "dist/vue-rollup-lib.ssr.js",

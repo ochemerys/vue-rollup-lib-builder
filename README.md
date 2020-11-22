@@ -22,3 +22,23 @@ npm run serve
 
 and open in browser provided url
 
+## Run unit tests
+
+``` bush
+npm t
+```
+
+## Build library
+
+To build components library run
+
+``` bush
+npm run build
+```
+
+and go to dist folder to list created files
+
+``` bush
+cd dist
+ls
+```
